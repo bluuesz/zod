@@ -94,3 +94,19 @@ test("regexp error message", () => {
 
   expect(() => z.string().uuid().parse("purr")).toThrow();
 });
+
+test("Failing empty input with blank spacing", () => {
+  expect(() => nonempty.parse("  ")).toThrow();
+  expect(() => nonempty.parse("idk  "));
+});
+
+test("schema with nonempty no blank and filled", () => {
+  const schema = z.object({
+    id: z.any().optional(),
+    name: z.string().nonempty({ message: "w/e" }),
+    email: z.string().email().nonempty(),
+  });
+
+  expect(() => schema.parse({ name: "  d", email: "xd@gmail.com" }));
+  expect(() => schema.parse({ name: "  ", email: "xd@gmail.com" })).toThrow();
+});

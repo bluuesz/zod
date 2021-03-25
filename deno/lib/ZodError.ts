@@ -14,6 +14,7 @@ export const ZodIssueCode = util.arrayToEnum([
   "too_small",
   "too_big",
   "invalid_intersection_types",
+  "empty_str",
 ]);
 
 export type ZodIssueCode = keyof typeof ZodIssueCode;
@@ -73,6 +74,13 @@ export interface ZodTooSmallIssue extends ZodIssueBase {
   type: "array" | "string" | "number";
 }
 
+export interface ZodEmptyStr extends ZodIssueBase {
+  code: typeof ZodIssueCode.empty_str;
+  minimum: number;
+  inclusive: boolean;
+  type: "string";
+}
+
 export interface ZodTooBigIssue extends ZodIssueBase {
   code: typeof ZodIssueCode.too_big;
   maximum: number;
@@ -105,6 +113,7 @@ export type ZodIssueOptionalMessage =
   | ZodTooSmallIssue
   | ZodTooBigIssue
   | ZodInvalidIntersectionTypesIssue
+  | ZodEmptyStr
   | ZodCustomIssue;
 
 export type ZodIssue = ZodIssueOptionalMessage & { message: string };
@@ -356,6 +365,10 @@ export let defaultErrorMap = (
       break;
     case ZodIssueCode.invalid_intersection_types:
       message = `Intersections only support objects`;
+      break;
+
+    case ZodIssueCode.empty_str:
+      message = "input is blank";
       break;
     default:
       message = `Invalid input.`;

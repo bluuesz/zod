@@ -516,6 +516,16 @@ export class ZodString extends ZodType<string, ZodStringDef> {
       },
     });
 
+  // change name
+  noBlankSpaceWithMin = (minLength: number, message?: errorUtil.ErrMessage) =>
+    this.refinement((data) => data.replace(/\s/g, "").length > 0, {
+      code: ZodIssueCode.empty_str,
+      minimum: minLength,
+      type: "string",
+      inclusive: true,
+      ...errorUtil.errToObj(message),
+    });
+
   max = (maxLength: number, message?: errorUtil.ErrMessage) =>
     new ZodString({
       ...this._def,
@@ -530,7 +540,7 @@ export class ZodString extends ZodType<string, ZodStringDef> {
   }
 
   nonempty = (message?: errorUtil.ErrMessage) =>
-    this.min(1, errorUtil.errToObj(message));
+    this.noBlankSpaceWithMin(1, errorUtil.errToObj(message));
 
   static create = (): ZodString => {
     return new ZodString({
